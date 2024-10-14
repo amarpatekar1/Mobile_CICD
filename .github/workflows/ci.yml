@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: circleci/node:latest
+        options: --privileged
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install Frontend dependencies
+      run: cd MyApp && npm install
+
+    - name: Run Frontend Unit Tests
+      run: cd MyApp && npm test
+
+    - name: Install Backend dependencies
+      run: cd MyBackend && npm install
+
+    - name: Run Backend Unit Tests
+      run: cd MyBackend && npm test
+
+    - name: Deploy to AWS (optional)
+      if: success()
+      run: |
+        echo "Deploying to AWS"
+        # Add your deployment script here
+
+
